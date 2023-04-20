@@ -24,24 +24,28 @@ def split_audio_on_middle_silence(audio_file):
 
     return audio_part1, audio_part2
 
-def main(video_path):
-    video = VideoFileClip(video_path)
-    audio = video.audio
-    audio.write_audiofile("audio.wav")
+def main(file_path):
+    if file_path.lower().endswith(('.mp3', '.wav', '.m4a', '.flac', '.ogg')):
+        audio_file = file_path
+    else:
+        video = VideoFileClip(file_path)
+        audio = video.audio
+        audio.write_audiofile("audio.wav")
+        audio_file = "audio.wav"
 
-    audio_part1, audio_part2 = split_audio_on_middle_silence("audio.wav")
+    audio_part1, audio_part2 = split_audio_on_middle_silence(audio_file)
     audio_part1.export("audio_part1.wav", format="wav")
     audio_part2.export("audio_part2.wav", format="wav")
     
 def open_file_dialog():
     root = tk.Tk()
     root.withdraw()
-    file_path = filedialog.askopenfilename(filetypes=[("Video files", "*.mp4;*.avi;*.mkv;*.mov;*.flv;*.wmv")])
+    file_path = filedialog.askopenfilename(filetypes=[("Audio and Video files", "*.mp3;*.wav;*.m4a;*.flac;*.ogg;*.mp4;*.avi;*.mkv;*.mov;*.flv;*.wmv")])
     return file_path
 
 if __name__ == "__main__":
-    video_path = open_file_dialog()
-    if video_path:
-        main(video_path)
+    file_path = open_file_dialog()
+    if file_path:
+        main(file_path)
     else:
         print("No file selected.")
